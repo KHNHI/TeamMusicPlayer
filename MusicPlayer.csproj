@@ -101,9 +101,14 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="Resources\playIcon1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pauseIcon.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pauseIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
