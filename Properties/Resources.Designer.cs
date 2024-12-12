@@ -63,6 +63,16 @@ namespace MusicPlayer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap pauseIcon {
+            get {
+                object obj = ResourceManager.GetObject("pauseIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap playIcon {
             get {
                 object obj = ResourceManager.GetObject("playIcon", resourceCulture);
