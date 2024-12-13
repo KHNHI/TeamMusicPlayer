@@ -17,30 +17,78 @@ namespace MusicPlayer
         {
             InitializeComponent();
             WindowState = FormWindowState.Maximized;
-          // axWindowsMediaPlayer1.PlayStateChange += axWindowsMediaPlayer1_PlayStateChange;
+            axWindowsMediaPlayer1.PlayStateChange += axWindowsMediaPlayer1_PlayStateChange;
         }
         OpenFileDialog openFileDialog;
         string[] filePaths;
         string[] fileNames;
         private void btnSwap_Click(object sender, EventArgs e)
         {
+            // Kiểm tra xem có đúng 2 mục được chọn
+            if (listBox1.SelectedItems.Count != 2)
+            {
+                MessageBox.Show("Vui lòng chọn đúng 2 mục để hoán đổi!");
+                return;
+            }
 
+            // Lấy chỉ số của hai mục được chọn
+            int index1 = listBox1.SelectedIndices[0];
+            int index2 = listBox1.SelectedIndices[1];
+
+
+            // Gọi hàm Swap trên danh sách liên kết
+            doublyLinkedList.Swap(index1, index2);
+
+            // Hoán đổi vị trí của hai mục trong ListBox
+            string temp = listBox1.Items[index1].ToString();
+            listBox1.Items[index1] = listBox1.Items[index2];
+            listBox1.Items[index2] = temp;
+            MessageBox.Show("Đã hoán đổi hai bài hát thành công!");
+
+            // Đảm bảo rằng hai mục vẫn được chọn sau khi hoán đổi
+            listBox1.SelectedIndices.Clear();
+            listBox1.SelectedIndices.Add(index1);
+            listBox1.SelectedIndices.Add(index2);
         }
 
         private void btnRemoveSong_Click(object sender, EventArgs e)
         {
+            if (listBox1.SelectedIndex != -1)
+            {
+                int selectedIndex = listBox1.SelectedIndex;
 
+                // Xóa bài hát khỏi danh sách liên kết kép
+                doublyLinkedList.RemoveAt(selectedIndex);
+
+                // Xóa bài hát khỏi ListBox
+                listBox1.Items.RemoveAt(selectedIndex);
+                MessageBox.Show("Đã xóa bài hát thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một bài hát để xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
+            openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Mp3 files, mp4 files(*.mp3, *.mp4)|*.mp*";
+            openFileDialog.Multiselect = true;
+            openFileDialog.Title = "Select Music Files";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string[] filePaths = openFileDialog.FileNames;
+                string[] fileNames = openFileDialog.SafeFileNames;
 
+                for (int i = 0; i < filePaths.Length; i++)
+                {
+                    doublyLinkedList.AddSong(filePaths[i], fileNames[i]); // Thêm vào playlist
+                    this.listBox1.Items.Add(fileNames[i]);       // Hiển thị trong listBox
+                }
+            }
         }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
+       
 
         private void btnNext_Click(object sender, EventArgs e)
         {
@@ -139,11 +187,44 @@ namespace MusicPlayer
             btnPlay.Refresh(); // Cập nhật giao diện
             isButtonClick = false; // Hoàn thành xử lý nút nhấn
         }
-
-        private void listBox1_SelectedIndexChanged_1(object sender, EventArgs e)
+       
+        private void listBox1_DoubleClick(object sender, EventArgs e)
         {
+            if (listBox1.SelectedIndex != -1)
+            {
+                int selectedIndex = listBox1.SelectedIndex;
+                doublyLinkedList.Current = doublyLinkedList.Head;
+
+                // Tìm bài hát tương ứng trong danh sách
+                for (int i = 0; i < selectedIndex; i++)
+                {
+                    doublyLinkedList.Current = doublyLinkedList.Current.Next;
+                }
+
+                // Phát bài hát
+                axWindowsMediaPlayer1.URL = doublyLinkedList.Current.FilePath;
+                // textBox1.Text = doublyLinkedList.Current.FileName;
+                btnPlay.BackgroundImage = Properties.Resources.pauseIcon;
+            }
 
         }
+
+        private void axWindowsMediaPlayer1_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
+        {
+            if (isButtonClick) return; // Bỏ qua nếu trạng thái thay đổi do nút nhấn
+
+            if (e.newState == (int)WMPLib.WMPPlayState.wmppsPlaying)
+            {
+                btnPlay.BackgroundImage = Properties.Resources.pauseIcon; // Biểu tượng Pause
+            }
+            else if (e.newState == (int)WMPLib.WMPPlayState.wmppsPaused ||
+                     e.newState == (int)WMPLib.WMPPlayState.wmppsStopped)
+            {
+                btnPlay.BackgroundImage = Properties.Resources.playIcon; // Biểu tượng Play
+            }
+            btnPlay.Refresh(); // Cập nhật giao diện
+        }
+
 
         private void btnSearch_Click(object sender, EventArgs e)
         {

@@ -98,6 +98,9 @@ namespace MusicPlayer
             }
             return null; // Không tìm thấy
         }
+
+
+
         public void Swap(int index1, int index2)
         {
             if (index1 == index2 || Head == null) return;
@@ -164,5 +167,10 @@ namespace MusicPlayer
             if (Tail == node1) Tail = node2;
             else if (Tail == node2) Tail = node1;
         }
+
+
+
+
+
     }
 }
