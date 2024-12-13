@@ -77,6 +77,7 @@
             this.btnSwap.BackColor = System.Drawing.Color.IndianRed;
             this.btnSwap.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSwap.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.btnSwap.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSwap.Location = new System.Drawing.Point(0, 527);
             this.btnSwap.Name = "btnSwap";
             this.btnSwap.Size = new System.Drawing.Size(278, 47);
@@ -90,6 +91,7 @@
             this.btnRemoveSong.BackColor = System.Drawing.Color.IndianRed;
             this.btnRemoveSong.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnRemoveSong.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.btnRemoveSong.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnRemoveSong.Location = new System.Drawing.Point(0, 574);
             this.btnRemoveSong.Name = "btnRemoveSong";
             this.btnRemoveSong.Size = new System.Drawing.Size(278, 47);
@@ -119,6 +121,7 @@
             this.btnAdd.BackColor = System.Drawing.Color.IndianRed;
             this.btnAdd.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnAdd.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.btnAdd.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAdd.Location = new System.Drawing.Point(0, 621);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(278, 45);
@@ -166,9 +169,10 @@
             // 
             this.btnSearch.BackColor = System.Drawing.Color.PaleGoldenrod;
             this.btnSearch.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSearch.Location = new System.Drawing.Point(276, 69);
+            this.btnSearch.Font = new System.Drawing.Font("Microsoft YaHei", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSearch.Location = new System.Drawing.Point(303, 65);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(91, 33);
+            this.btnSearch.Size = new System.Drawing.Size(102, 44);
             this.btnSearch.TabIndex = 7;
             this.btnSearch.Text = "Search";
             this.btnSearch.UseVisualStyleBackColor = false;
@@ -176,18 +180,19 @@
             // 
             // txtbSong
             // 
-            this.txtbSong.Location = new System.Drawing.Point(3, 72);
+            this.txtbSong.Location = new System.Drawing.Point(17, 72);
             this.txtbSong.Name = "txtbSong";
-            this.txtbSong.Size = new System.Drawing.Size(267, 26);
+            this.txtbSong.Size = new System.Drawing.Size(280, 26);
             this.txtbSong.TabIndex = 6;
             // 
             // btnNext
             // 
             this.btnNext.BackColor = System.Drawing.Color.PaleGoldenrod;
             this.btnNext.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnNext.Location = new System.Drawing.Point(634, 1);
+            this.btnNext.Font = new System.Drawing.Font("Microsoft YaHei", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnNext.Location = new System.Drawing.Point(1000, 1);
             this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(134, 53);
+            this.btnNext.Size = new System.Drawing.Size(119, 53);
             this.btnNext.TabIndex = 4;
             this.btnNext.Text = "Next";
             this.btnNext.UseVisualStyleBackColor = false;
@@ -197,9 +202,10 @@
             // 
             this.btnPrevious.BackColor = System.Drawing.Color.PaleGoldenrod;
             this.btnPrevious.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnPrevious.Location = new System.Drawing.Point(195, 1);
+            this.btnPrevious.Font = new System.Drawing.Font("Microsoft YaHei", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPrevious.Location = new System.Drawing.Point(600, 1);
             this.btnPrevious.Name = "btnPrevious";
-            this.btnPrevious.Size = new System.Drawing.Size(129, 53);
+            this.btnPrevious.Size = new System.Drawing.Size(119, 53);
             this.btnPrevious.TabIndex = 3;
             this.btnPrevious.Text = "Prev";
             this.btnPrevious.UseVisualStyleBackColor = false;
@@ -211,7 +217,7 @@
             this.btnPlay.BackgroundImage = global::MusicPlayer.Properties.Resources.playIcon;
             this.btnPlay.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnPlay.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnPlay.Location = new System.Drawing.Point(435, 1);
+            this.btnPlay.Location = new System.Drawing.Point(800, 1);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(119, 53);
             this.btnPlay.TabIndex = 2;
