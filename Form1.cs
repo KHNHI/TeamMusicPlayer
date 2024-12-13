@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AxWMPLib;
+using MusicPlayer;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,69 +9,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace MusicPlayer
 {
     public partial class Form1 : Form
     {
         private DoublyLinkedList doublyLinkedList = new DoublyLinkedList();
+
         public Form1()
         {
+
             InitializeComponent();
             WindowState = FormWindowState.Maximized;
             axWindowsMediaPlayer1.PlayStateChange += axWindowsMediaPlayer1_PlayStateChange;
         }
+
+
+        //private void splitcontainer1_splittermoved(object sender, splittereventargs e)
+        //{
+        // điều chỉnh kích thước các thành phần nếu cần
+        //   listbox1.width = splitcontainer1.panel1.width; // cập nhật listbox theo panel1
+        // axwindowsmediaplayer1.width = splitcontainer1.panel2.width; // cập nhật media player theo panel2
+        //}
         OpenFileDialog openFileDialog;
         string[] filePaths;
         string[] fileNames;
-        private void btnSwap_Click(object sender, EventArgs e)
-        {
-            // Kiểm tra xem có đúng 2 mục được chọn
-            if (listBox1.SelectedItems.Count != 2)
-            {
-                MessageBox.Show("Vui lòng chọn đúng 2 mục để hoán đổi!");
-                return;
-            }
-
-            // Lấy chỉ số của hai mục được chọn
-            int index1 = listBox1.SelectedIndices[0];
-            int index2 = listBox1.SelectedIndices[1];
-
-
-            // Gọi hàm Swap trên danh sách liên kết
-            doublyLinkedList.Swap(index1, index2);
-
-            // Hoán đổi vị trí của hai mục trong ListBox
-            string temp = listBox1.Items[index1].ToString();
-            listBox1.Items[index1] = listBox1.Items[index2];
-            listBox1.Items[index2] = temp;
-            MessageBox.Show("Đã hoán đổi hai bài hát thành công!");
-
-            // Đảm bảo rằng hai mục vẫn được chọn sau khi hoán đổi
-            listBox1.SelectedIndices.Clear();
-            listBox1.SelectedIndices.Add(index1);
-            listBox1.SelectedIndices.Add(index2);
-        }
-
-        private void btnRemoveSong_Click(object sender, EventArgs e)
-        {
-            if (listBox1.SelectedIndex != -1)
-            {
-                int selectedIndex = listBox1.SelectedIndex;
-
-                // Xóa bài hát khỏi danh sách liên kết kép
-                doublyLinkedList.RemoveAt(selectedIndex);
-
-                // Xóa bài hát khỏi ListBox
-                listBox1.Items.RemoveAt(selectedIndex);
-                MessageBox.Show("Đã xóa bài hát thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else
-            {
-                MessageBox.Show("Vui lòng chọn một bài hát để xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
-
         private void btnAdd_Click(object sender, EventArgs e)
         {
             openFileDialog = new OpenFileDialog();
@@ -83,12 +50,53 @@ namespace MusicPlayer
 
                 for (int i = 0; i < filePaths.Length; i++)
                 {
-                    doublyLinkedList.AddSong(filePaths[i], fileNames[i]); // Thêm vào playlist
-                    this.listBox1.Items.Add(fileNames[i]);       // Hiển thị trong listBox
+                    // Kiểm tra xem file đã tồn tại trong listBox1 hay chưa
+                    bool alreadyExists = false;
+                    foreach (var item in listBox1.Items)
+                    {
+                        if (item.ToString().Equals(fileNames[i], StringComparison.OrdinalIgnoreCase))
+                        {
+                            alreadyExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!alreadyExists)
+                    {
+                        // Thêm bài nhạc vào danh sách nếu chưa tồn tại
+                        doublyLinkedList.AddSong(filePaths[i], fileNames[i]); // Thêm vào playlist
+                        listBox1.Items.Add(fileNames[i]);                    // Hiển thị trong listBox
+                    }
+                    else
+                    {
+                        // Hiển thị thông báo nếu bài nhạc đã tồn tại
+                        MessageBox.Show($"File \"{fileNames[i]}\" đã tồn tại trong danh sách!", "Trùng lặp", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+
                 }
             }
         }
-       
+
+        private void listBox1_DoubleClick(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedIndex != -1)
+            {
+                int selectedIndex = listBox1.SelectedIndex;
+                doublyLinkedList.Current = doublyLinkedList.Head;
+
+                // Tìm bài hát tương ứng trong danh sách
+                for (int i = 0; i < selectedIndex; i++)
+                {
+                    doublyLinkedList.Current = doublyLinkedList.Current.Next;
+                }
+
+                // Phát bài hát
+                axWindowsMediaPlayer1.URL = doublyLinkedList.Current.FilePath;
+                // textBox1.Text = doublyLinkedList.Current.FileName;
+                btnPlay.BackgroundImage = Properties.Resources.pauseIcon;
+            }
+
+        }
 
         private void btnNext_Click(object sender, EventArgs e)
         {
@@ -127,7 +135,6 @@ namespace MusicPlayer
                     listBox1.SelectedIndex = currentIndex;
                 }
             }
-
         }
 
         private void btnPrevious_Click(object sender, EventArgs e)
@@ -161,14 +168,30 @@ namespace MusicPlayer
                     listBox1.SelectedIndex = currentIndex;
                 }
             }
-
         }
 
+        private void btnRandom_Click(object sender, EventArgs e)
+        {
+            Random random = new Random();
+            int randomIndex = random.Next(0, listBox1.Items.Count);
+
+            doublyLinkedList.Current = doublyLinkedList.Head;
+
+            // Tìm bài hát ngẫu nhiên
+            for (int i = 0; i < randomIndex; i++)
+            {
+                doublyLinkedList.Current = doublyLinkedList.Current.Next;
+            }
+
+            // Phát bài hát
+            axWindowsMediaPlayer1.URL = doublyLinkedList.Current.FilePath;
+            //textBox1.Text = doublyLinkedList.Current.FileName;
+        }
         private bool isButtonClick = false; // Cờ xác định thay đổi do nút nhấn
+
         private void btnPlay_Click(object sender, EventArgs e)
         {
             isButtonClick = true; // Đánh dấu trạng thái được thay đổi bởi nút nhấn
-
 
             if (axWindowsMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsPlaying)
             {
@@ -187,27 +210,6 @@ namespace MusicPlayer
             btnPlay.Refresh(); // Cập nhật giao diện
             isButtonClick = false; // Hoàn thành xử lý nút nhấn
         }
-       
-        private void listBox1_DoubleClick(object sender, EventArgs e)
-        {
-            if (listBox1.SelectedIndex != -1)
-            {
-                int selectedIndex = listBox1.SelectedIndex;
-                doublyLinkedList.Current = doublyLinkedList.Head;
-
-                // Tìm bài hát tương ứng trong danh sách
-                for (int i = 0; i < selectedIndex; i++)
-                {
-                    doublyLinkedList.Current = doublyLinkedList.Current.Next;
-                }
-
-                // Phát bài hát
-                axWindowsMediaPlayer1.URL = doublyLinkedList.Current.FilePath;
-                // textBox1.Text = doublyLinkedList.Current.FileName;
-                btnPlay.BackgroundImage = Properties.Resources.pauseIcon;
-            }
-
-        }
 
         private void axWindowsMediaPlayer1_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
         {
@@ -225,6 +227,24 @@ namespace MusicPlayer
             btnPlay.Refresh(); // Cập nhật giao diện
         }
 
+        private void btnRemoveSong_Click(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedIndex != -1)
+            {
+                int selectedIndex = listBox1.SelectedIndex;
+
+                // Xóa bài hát khỏi danh sách liên kết kép
+                doublyLinkedList.RemoveAt(selectedIndex);
+
+                // Xóa bài hát khỏi ListBox
+                listBox1.Items.RemoveAt(selectedIndex);
+                MessageBox.Show("Đã xóa bài hát thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một bài hát để xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
@@ -249,5 +269,36 @@ namespace MusicPlayer
                 MessageBox.Show("Không tìm thấy bài hát nào phù hợp.", "Kết quả", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+
+
+        private void btnSwap_Click(object sender, EventArgs e)
+        {
+            // Kiểm tra xem có đúng 2 mục được chọn
+            if (listBox1.SelectedItems.Count != 2)
+            {
+                MessageBox.Show("Vui lòng chọn đúng 2 mục để hoán đổi!");
+                return;
+            }
+
+            // Lấy chỉ số của hai mục được chọn
+            int index1 = listBox1.SelectedIndices[0];
+            int index2 = listBox1.SelectedIndices[1];
+
+
+            // Gọi hàm Swap trên danh sách liên kết
+            doublyLinkedList.Swap(index1, index2);
+
+            // Hoán đổi vị trí của hai mục trong ListBox
+            string temp = listBox1.Items[index1].ToString();
+            listBox1.Items[index1] = listBox1.Items[index2];
+            listBox1.Items[index2] = temp;
+            MessageBox.Show("Đã hoán đổi hai bài hát thành công!");
+
+            // Đảm bảo rằng hai mục vẫn được chọn sau khi hoán đổi
+            listBox1.SelectedIndices.Clear();
+            listBox1.SelectedIndices.Add(index1);
+            listBox1.SelectedIndices.Add(index2);
+        }
     }
 }
+
